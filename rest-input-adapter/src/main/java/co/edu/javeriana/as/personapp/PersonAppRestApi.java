@@ -6,13 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "co.edu.javeriana.as.personapp")
 public class PersonAppRestApi {
-
-	public static void main(String[] args) {
-		log.info("Starting PersonAppRestApi ...");
-		SpringApplication.run(PersonAppRestApi.class, args);
-		log.info("Started PersonAppRestApi OK");
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(PersonAppRestApi.class, args);
+    }
 }
