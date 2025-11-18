@@ -12,6 +12,7 @@ import co.edu.javeriana.as.personapp.application.port.out.PhoneOutputPort;
 import co.edu.javeriana.as.personapp.application.usecase.PhoneUseCase;
 import co.edu.javeriana.as.personapp.common.annotations.Adapter;
 import co.edu.javeriana.as.personapp.common.exceptions.InvalidOptionException;
+import co.edu.javeriana.as.personapp.common.exceptions.NoExistException;
 import co.edu.javeriana.as.personapp.common.setup.DatabaseOption;
 import co.edu.javeriana.as.personapp.domain.Phone;
 import co.edu.javeriana.as.personapp.mapper.TelefonoMapperRest;
@@ -75,6 +76,8 @@ public class TelefonoInputAdapterRest {
 			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
+		} catch (NoExistException e) {
+			log.error("Person does not exist: " + e.getMessage());
 		}
 		return null;
 	}
@@ -110,6 +113,9 @@ public class TelefonoInputAdapterRest {
 			} else {
 				return telefonoMapperRest.fromDomainToAdapterRestMongo(updatedPhone);
 			}
+		} catch (NoExistException e) {
+			log.error("Person does not exist: " + e.getMessage());
+			return null;
 		} catch (Exception e) {
 			log.warn(e.getMessage());
 			return null;
