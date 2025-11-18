@@ -68,14 +68,65 @@ public class PersonaInputAdapterRest {
 
 	public PersonaResponse crearPersona(PersonaRequest request) {
 		try {
-			setPersonOutputPortInjection(request.getDatabase());
+			String database = setPersonOutputPortInjection(request.getDatabase());
 			Person person = personInputPort.create(personaMapperRest.fromAdapterToDomain(request));
-			return personaMapperRest.fromDomainToAdapterRestMaria(person);
+			if (database.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return personaMapperRest.fromDomainToAdapterRestMaria(person);
+			} else {
+				return personaMapperRest.fromDomainToAdapterRestMongo(person);
+			}
 		} catch (InvalidOptionException e) {
 			log.warn(e.getMessage());
-			//return new PersonaResponse("", "", "", "", "", "", "");
 		}
 		return null;
+	}
+
+	public PersonaResponse buscarPorId(String database, Integer id) {
+		log.info("Into buscarPorId PersonaEntity in Input Adapter");
+		try {
+			String db = setPersonOutputPortInjection(database);
+			Person person = personInputPort.findOne(id);
+			if (person == null) {
+				return null;
+			}
+			if (db.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return personaMapperRest.fromDomainToAdapterRestMaria(person);
+			} else {
+				return personaMapperRest.fromDomainToAdapterRestMongo(person);
+			}
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
+
+	public PersonaResponse actualizarPersona(String database, Integer id, PersonaRequest request) {
+		log.info("Into actualizarPersona PersonaEntity in Input Adapter");
+		try {
+			String db = setPersonOutputPortInjection(database);
+			Person person = personaMapperRest.fromAdapterToDomain(request);
+			person.setIdentification(id);
+			Person updatedPerson = personInputPort.edit(id, person);
+			if (db.equalsIgnoreCase(DatabaseOption.MARIA.toString())) {
+				return personaMapperRest.fromDomainToAdapterRestMaria(updatedPerson);
+			} else {
+				return personaMapperRest.fromDomainToAdapterRestMongo(updatedPerson);
+			}
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			return null;
+		}
+	}
+
+	public Boolean eliminarPersona(String database, Integer id) {
+		log.info("Into eliminarPersona PersonaEntity in Input Adapter");
+		try {
+			setPersonOutputPortInjection(database);
+			return personInputPort.drop(id);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			return false;
+		}
 	}
 
 }
