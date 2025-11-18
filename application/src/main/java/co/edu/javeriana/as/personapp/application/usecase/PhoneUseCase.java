@@ -27,7 +27,7 @@ public class PhoneUseCase implements PhoneInputPort {
 	}
 
 	@Override
-	public Phone create(Phone phone) {
+	public Phone create(Phone phone) throws NoExistException {
 		log.debug("Into create on Application Domain");
 		return phonePersintence.save(phone);
 	}
